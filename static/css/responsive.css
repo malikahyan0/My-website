@@ -1,0 +1,197 @@
+/* Gusto Italiano - Responsive Fixes Stylesheet */
+/* Load this AFTER style.css, components.css, and admin.css */
+
+/* ===========================
+   1. General mobile spacing
+   =========================== */
+@media (max-width: 768px) {
+  .section-padding {
+    padding: 60px 0;
+  }
+
+  .section-title {
+    font-size: 1.9rem;
+  }
+
+  .about-banner h1,
+  .contact-banner h1,
+  .gallery-banner h1,
+  .menu-header-banner h1,
+  .reviews-banner h1 {
+    font-size: 2.1rem;
+    padding: 0 15px;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    width: 94%;
+    padding: 0 10px;
+  }
+
+  .section-padding {
+    padding: 45px 0;
+  }
+
+  .section-title {
+    font-size: 1.6rem;
+  }
+
+  .btn {
+    padding: 12px 20px;
+    font-size: 0.8rem;
+  }
+}
+
+/* ===========================
+   2. Header / Nav actions
+   =========================== */
+@media (max-width: 480px) {
+  .logo {
+    font-size: 1.3rem;
+  }
+
+  .nav-actions {
+    gap: 8px;
+  }
+
+  .nav-action-btn {
+    width: 34px;
+    height: 34px;
+    font-size: 1rem;
+  }
+
+  #lang-select {
+    padding: 3px 5px !important;
+    font-size: 0.7rem !important;
+  }
+
+  .mobile-nav-toggle {
+    width: 24px;
+  }
+}
+
+/* ===========================
+   3. Checkout page (missing breakpoint)
+   =========================== */
+@media (max-width: 900px) {
+  .checkout-grid {
+    grid-template-columns: 1fr;
+    gap: 25px;
+  }
+}
+
+@media (max-width: 480px) {
+  .checkout-box {
+    padding: 22px;
+  }
+
+  .checkout-box > form > div[style*="grid-template-columns: 1fr 1fr"] {
+    grid-template-columns: 1fr !important;
+    gap: 15px !important;
+  }
+}
+
+/* ===========================
+   4. Menu page AI bar + grid
+   =========================== */
+@media (max-width: 480px) {
+  .ai-recommend-bar {
+    padding: 18px;
+  }
+
+  .items-list-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+}
+
+/* ===========================
+   5. Gallery
+   =========================== */
+@media (max-width: 480px) {
+  .gallery-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .gallery-filter-bar {
+    gap: 8px;
+  }
+
+  .gallery-filter-btn {
+    padding: 8px 14px;
+    font-size: 0.75rem;
+  }
+}
+
+/* ===========================
+   6. Admin dashboard
+   =========================== */
+@media (max-width: 768px) {
+  .admin-content {
+    padding: 20px;
+  }
+
+  .admin-page-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 15px;
+  }
+
+  .admin-table th,
+  .admin-table td {
+    padding: 12px 14px;
+    font-size: 0.8rem;
+  }
+}
+
+/* ===========================
+   7. Cards, modals, drawers on tiny screens
+   =========================== */
+@media (max-width: 480px) {
+  .modal-content {
+    padding: 25px;
+    width: 92%;
+  }
+
+  .cart-drawer {
+    max-width: 100%;
+  }
+
+  .chat-window {
+    width: 92vw;
+    right: -4vw;
+  }
+
+  .chat-widget-container {
+    bottom: 16px;
+    right: 16px;
+  }
+}
+
+/* ===========================
+   8. Reviews summary card
+   =========================== */
+@media (max-width: 480px) {
+  .reviews-summary-card {
+    flex-direction: column;
+    padding: 22px;
+    gap: 20px;
+  }
+
+  .avg-score {
+    font-size: 3rem;
+  }
+}
+
+/* ===========================
+   9. Prevent any horizontal overflow
+   =========================== */
+html, body {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+table {
+  max-width: 100%;
+}

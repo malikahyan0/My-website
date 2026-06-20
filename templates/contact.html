@@ -1,0 +1,259 @@
+{% extends 'base.html' %}
+
+{% block styles %}
+<style>
+  /* Contact Page Styling */
+  .contact-banner {
+    background: linear-gradient(to right, rgba(0,0,0,0.7), rgba(0,0,0,0.85)), url('/static/images/restaurant_interior.png') center/cover;
+    height: 300px;
+    margin-top: var(--header-height);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #ffffff;
+    text-align: center;
+  }
+  .contact-banner h1 {
+    font-family: var(--font-display);
+    font-size: 3rem;
+  }
+
+  .contact-grid {
+    display: grid;
+    grid-template-columns: 1fr 1.5fr;
+    gap: 50px;
+    margin-top: 50px;
+  }
+
+  .contact-details-box {
+    background-color: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 35px;
+    box-shadow: 0 4px 15px var(--shadow);
+  }
+
+  .contact-item-row {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 25px;
+  }
+  .contact-item-row i {
+    font-size: 1.4rem;
+    color: var(--accent);
+    margin-top: 5px;
+  }
+  .contact-item-text h4 {
+    font-size: 0.95rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 5px;
+  }
+  .contact-item-text p, 
+  .contact-item-text a {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+  }
+  .contact-item-text a:hover {
+    color: var(--accent);
+  }
+
+  /* SVG Styled Map */
+  .svg-map-wrapper {
+    width: 100%;
+    height: 350px;
+    background-color: var(--bg-tertiary);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+    position: relative;
+    margin-top: 40px;
+    box-shadow: 0 4px 15px var(--shadow);
+  }
+  .svg-map {
+    width: 100%;
+    height: 100%;
+  }
+
+  @media (max-width: 992px) {
+    .contact-grid {
+      grid-template-columns: 1fr;
+      gap: 30px;
+    }
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+  <!-- Contact Banner -->
+  <section class="contact-banner">
+    <div>
+      <h1 data-trn="contact_banner_title">Connect With Us</h1>
+      <p style="color: var(--accent); letter-spacing: 2px; text-transform: uppercase; font-size: 0.9rem;" data-trn="contact_banner_subtitle">We are always ready to welcome you</p>
+    </div>
+  </section>
+
+  <div class="container section-padding">
+    
+    <div class="contact-grid">
+      <!-- Details -->
+      <aside class="contact-details-box">
+        <h3 style="font-family: var(--font-display); font-size: 1.5rem; margin-bottom: 25px;" data-trn="find_us">Find Us</h3>
+        
+        <!-- Address -->
+        <div class="contact-item-row">
+          <i class="fa-solid fa-location-dot"></i>
+          <div class="contact-item-text">
+            <h4 data-trn="location_label">Our Location</h4>
+            <p>Via dei Condotti, 12, 00187 Roma, RM, Italy</p>
+          </div>
+        </div>
+
+        <!-- Phone -->
+        <div class="contact-item-row">
+          <i class="fa-solid fa-phone"></i>
+          <div class="contact-item-text">
+            <h4 data-trn="phone_label">Phone Number</h4>
+            <a href="tel:+39066992123" style="display: block;">+39 06 699 2123</a>
+            <a href="https://wa.me/393331234567" target="_blank" style="display: inline-flex; align-items: center; gap: 5px; color: var(--success); font-weight: 600; margin-top: 5px;">
+              <i class="fa-brands fa-whatsapp"></i> Chat on WhatsApp
+            </a>
+          </div>
+        </div>
+
+        <!-- Email -->
+        <div class="contact-item-row">
+          <i class="fa-solid fa-envelope"></i>
+          <div class="contact-item-text">
+            <h4 data-trn="email_label">Email Address</h4>
+            <a href="mailto:ciao@gustoitaliano.com">ciao@gustoitaliano.com</a>
+          </div>
+        </div>
+
+        <!-- Hours -->
+        <div class="contact-item-row" style="margin-bottom: 0;">
+          <i class="fa-solid fa-clock"></i>
+          <div class="contact-item-text">
+            <h4 data-trn="business_hours">Business Hours</h4>
+            <p data-trn="weekdays_hours">Mon - Fri: 07:30 AM - 10:00 PM</p>
+            <p data-trn="weekends_hours">Sat - Sun: 08:30 AM - 11:30 PM</p>
+          </div>
+        </div>
+      </aside>
+
+      <!-- Message Form -->
+      <section class="contact-details-box" style="background-color: var(--bg-primary);">
+        <h3 style="font-family: var(--font-display); font-size: 1.5rem; margin-bottom: 25px;" data-trn="send_message_title">Send Us a Message</h3>
+        
+        <form id="contact-inquiry-form">
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
+            <div class="form-group">
+              <label for="contact-name" data-trn="name_label">Your Name</label>
+              <input type="text" id="contact-name" required placeholder="Mario Rossi" value="{% if session.get('full_name') %}{{ session.get('full_name') }}{% endif %}">
+            </div>
+            <div class="form-group">
+              <label for="contact-email" data-trn="email_label">Email Address</label>
+              <input type="email" id="contact-email" required placeholder="mario@domain.com" value="{% if session.get('email') %}{{ session.get('email') }}{% endif %}">
+            </div>
+          </div>
+          
+          <div class="form-group" style="margin-bottom: 20px;">
+            <label for="contact-subject" data-trn="subject_label">Subject</label>
+            <input type="text" id="contact-subject" required placeholder="Inquiry about catering, reservation, event...">
+          </div>
+          
+          <div class="form-group" style="margin-bottom: 25px;">
+            <label for="contact-message" data-trn="message_label">Message</label>
+            <textarea id="contact-message" rows="5" required placeholder="Tell us how we can help you today..."></textarea>
+          </div>
+          
+          <button type="submit" class="btn btn-primary" style="width: 100%;" data-trn="send_message_btn">Send Message</button>
+        </form>
+      </section>
+    </div>
+
+    <!-- Stylized SVG Map -->
+    <div class="svg-map-wrapper">
+      <svg class="svg-map" viewBox="0 0 800 350" xmlns="http://www.w3.org/2000/svg">
+        <!-- Background Grid Grid Lines -->
+        <rect width="100%" height="100%" fill="var(--bg-tertiary)" />
+        
+        <!-- Streets -->
+        <line x1="0" y1="80" x2="800" y2="80" stroke="var(--border)" stroke-width="12" />
+        <line x1="0" y1="260" x2="800" y2="260" stroke="var(--border)" stroke-width="15" />
+        <line x1="200" y1="0" x2="200" y2="350" stroke="var(--border)" stroke-width="12" />
+        <line x1="600" y1="0" x2="600" y2="350" stroke="var(--border)" stroke-width="12" />
+        <line x1="400" y1="0" x2="400" y2="350" stroke="var(--border)" stroke-width="16" />
+        
+        <!-- Diagonal Street -->
+        <line x1="50" y1="0" x2="750" y2="350" stroke="var(--border)" stroke-width="10" opacity="0.7" />
+
+        <!-- Blocks -->
+        <!-- Top Left Block -->
+        <rect x="20" y="20" width="160" height="40" fill="var(--bg-secondary)" rx="4" />
+        <!-- Mid Block -->
+        <rect x="220" y="100" width="160" height="140" fill="var(--bg-secondary)" rx="4" />
+        <!-- Mid Right Block -->
+        <rect x="420" y="100" width="160" height="140" fill="var(--bg-secondary)" rx="4" />
+        
+        <!-- Street labels -->
+        <text x="300" y="74" fill="var(--text-secondary)" font-size="10" font-family="var(--font-body)" letter-spacing="1">VIA DEL CORSO</text>
+        <text x="310" y="254" fill="var(--text-secondary)" font-size="10" font-family="var(--font-body)" letter-spacing="1">VIA FRATTINA</text>
+        <text x="412" y="180" fill="var(--text-secondary)" font-size="10" font-family="var(--font-body)" letter-spacing="1" transform="rotate(90 412 180)">VIA DEI CONDOTTI</text>
+
+        <!-- River Tiber Mock Graphic (Sleek Golden Line) -->
+        <path d="M 0 350 Q 150 200 100 0" fill="none" stroke="var(--accent)" stroke-width="4" opacity="0.2" />
+        
+        <!-- Gusto Italiano Location Pin -->
+        <circle cx="400" cy="140" r="14" fill="var(--accent)" opacity="0.3">
+          <animate attributeName="r" values="14;24;14" dur="2s" repeatCount="indefinite" />
+          <animate attributeName="opacity" values="0.3;0;0.3" dur="2s" repeatCount="indefinite" />
+        </circle>
+        
+        <!-- Golden Location Marker Pin -->
+        <g transform="translate(390, 110)">
+          <path d="M10 0 C4.477 0 0 4.477 0 10 C0 17.5 10 28 10 28 C10 28 20 17.5 20 10 C20 4.477 15.523 0 10 0 Z" fill="var(--accent)" />
+          <circle cx="10" cy="10" r="4.5" fill="var(--bg-primary)" />
+        </g>
+        
+        <!-- Label Card -->
+        <g transform="translate(425, 110)">
+          <rect width="135" height="42" fill="var(--bg-primary)" rx="4" stroke="var(--accent)" stroke-width="1.5" />
+          <text x="12" y="18" fill="var(--text-primary)" font-size="10" font-weight="700" font-family="var(--font-body)">GUSTO ITALIANO</text>
+          <text x="12" y="32" fill="var(--text-secondary)" font-size="8" font-family="var(--font-body)">Specialty Coffee House</text>
+        </g>
+      </svg>
+    </div>
+  </div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  // Simple inquiry submission AJAX
+  document.getElementById('contact-inquiry-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const name = document.getElementById('contact-name').value;
+    const email = document.getElementById('contact-email').value;
+    const subject = document.getElementById('contact-subject').value;
+    const message = document.getElementById('contact-message').value;
+
+    fetch('/api/contact/submit', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, email, subject, message })
+    })
+    .then(res => res.json())
+    .then(data => {
+      if (data.success) {
+        showToast(data.message, 'success');
+        document.getElementById('contact-message').value = '';
+        document.getElementById('contact-subject').value = '';
+      } else {
+        showToast(data.message, 'error');
+      }
+    })
+    .catch(() => showToast('Failed to connect to server', 'error'));
+  });
+</script>
+{% endblock %}

@@ -1,0 +1,378 @@
+{% extends 'base.html' %}
+
+{% block styles %}
+<style>
+  .tracking-card {
+    background-color: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 40px;
+    box-shadow: 0 10px 30px var(--shadow);
+    max-width: 800px;
+    margin: 40px auto 0 auto;
+  }
+  
+  .tracking-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 20px;
+    margin-bottom: 30px;
+  }
+  .tracking-header h2 {
+    font-family: var(--font-display);
+    font-size: 1.8rem;
+    font-weight: 600;
+  }
+  
+  /* Progress Steps */
+  .progress-tracker {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+    margin-bottom: 40px;
+  }
+  .progress-tracker::before {
+    content: '';
+    position: absolute;
+    top: 25px;
+    left: 40px;
+    right: 40px;
+    height: 4px;
+    background-color: var(--border);
+    z-index: 1;
+  }
+  .progress-bar-fill {
+    position: absolute;
+    top: 25px;
+    left: 40px;
+    height: 4px;
+    background-color: var(--accent);
+    z-index: 2;
+    width: 0%;
+    transition: width 0.8s ease;
+  }
+  .progress-step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    z-index: 3;
+    width: 100px;
+  }
+  .step-circle {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background-color: var(--bg-primary);
+    border: 2px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    color: var(--text-secondary);
+    transition: var(--transition-smooth);
+  }
+  .progress-step.active .step-circle {
+    border-color: var(--accent);
+    color: var(--accent);
+    box-shadow: 0 0 15px var(--accent-light);
+    background-color: var(--bg-secondary);
+  }
+  .progress-step.completed .step-circle {
+    background-color: var(--accent);
+    border-color: var(--accent);
+    color: #121212;
+  }
+  .step-label {
+    font-size: 0.8rem;
+    font-weight: 600;
+    margin-top: 10px;
+    text-align: center;
+  }
+
+  .order-receipt-box {
+    background-color: var(--bg-primary);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 25px;
+  }
+  
+  @media (max-width: 600px) {
+    .progress-tracker {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 25px;
+      padding-left: 20px;
+    }
+    .progress-tracker::before {
+      top: 0;
+      bottom: 0;
+      left: 45px;
+      width: 4px;
+      height: auto;
+    }
+    .progress-bar-fill {
+      top: 0;
+      bottom: 0;
+      left: 45px;
+      width: 4px;
+      height: 0%;
+    }
+    .progress-step {
+      flex-direction: row;
+      gap: 15px;
+      width: 100%;
+    }
+    .step-label {
+      margin-top: 0;
+    }
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+  <div class="container section-padding" style="margin-top: var(--header-height);">
+    
+    <div class="tracking-card">
+      <div class="tracking-header">
+        <div>
+          <h2>Order #{{ order.id }}</h2>
+          <p style="font-size: 0.85rem; color: var(--text-secondary);">
+            Ordered: {{ order.created_at }} &bull; Payment: <strong style="text-transform: uppercase;">{{ order.payment_method }}</strong>
+          </p>
+        </div>
+        <div>
+          <span class="status-pill {{ order.status }}" id="order-status-badge">{{ order.status }}</span>
+        </div>
+      </div>
+      
+      <!-- Progress Bar Tracker -->
+      <div class="progress-tracker" id="tracker-bar-container">
+        <div class="progress-bar-fill" id="tracker-fill-progress"></div>
+        
+        <!-- Step 1: Confirmed -->
+        <div class="progress-step" id="step-confirmed">
+          <div class="step-circle"><i class="fa-solid fa-receipt"></i></div>
+          <div class="step-label" data-trn="step_confirmed">Confirmed</div>
+        </div>
+        
+        <!-- Step 2: Preparing -->
+        <div class="progress-step" id="step-preparing">
+          <div class="step-circle"><i class="fa-solid fa-fire-burner"></i></div>
+          <div class="step-label" data-trn="step_preparing">Preparing</div>
+        </div>
+        
+        <!-- Step 3: Out for Delivery -->
+        <div class="progress-step" id="step-shipping">
+          <div class="step-circle"><i class="fa-solid fa-motorcycle"></i></div>
+          <div class="step-label" data-trn="step_shipping">On the Way</div>
+        </div>
+        
+        <!-- Step 4: Arrived -->
+        <div class="progress-step" id="step-delivered">
+          <div class="step-circle"><i class="fa-solid fa-house-chimney-user"></i></div>
+          <div class="step-label" data-trn="step_delivered">Delivered</div>
+        </div>
+      </div>
+
+      <!-- Cancelled Status Banner -->
+      <div id="cancelled-banner" style="display: none; background-color: rgba(168,90,90,0.1); border: 1px solid var(--error); border-radius: 6px; padding: 15px 20px; text-align: center; color: var(--error); margin-bottom: 30px; font-weight: 600;">
+        <i class="fa-solid fa-circle-xmark" style="font-size: 1.5rem; margin-bottom: 5px; display: block;"></i>
+        This order has been cancelled. Please contact support.
+      </div>
+      
+      <!-- Order Items Detail -->
+      <div class="order-receipt-box">
+        <h3 style="font-family: var(--font-display); font-size: 1.2rem; margin-bottom: 15px; border-bottom: 1px solid var(--border); padding-bottom: 10px;" data-trn="items_receipt">Order Details</h3>
+        
+        <div style="margin-bottom: 20px;">
+          {% for item in order.items %}
+            <div style="display: flex; justify-content: space-between; font-size: 0.9rem; margin-bottom: 10px;">
+              <span>{{ item.name }} <strong style="color: var(--text-secondary); margin-left: 5px;">(x{{ item.quantity }})</strong></span>
+              <span>{{ (item.price_at_purchase * item.quantity) | currency }}</span>
+            </div>
+          {% endfor %}
+        </div>
+        
+        <div style="border-top: 1px solid var(--border); padding-top: 15px; font-size: 0.9rem;">
+          <div style="display: flex; justify-content: space-between; margin-bottom: 5px; color: var(--text-secondary);">
+            <span data-trn="subtotal">Subtotal:</span>
+            <span>{{ order.subtotal | currency }}</span>
+          </div>
+          {% if order.discount > 0 %}
+            <div style="display: flex; justify-content: space-between; margin-bottom: 5px; color: var(--success);">
+              <span data-trn="discount">Discount:</span>
+              <span>-{{ order.discount | currency }}</span>
+            </div>
+          {% endif %}
+          <div style="display: flex; justify-content: space-between; font-size: 1.1rem; font-weight: 700; margin-top: 10px; border-top: 1px dotted var(--border); padding-top: 10px;">
+            <span data-trn="total">Total Paid:</span>
+            <span style="color: var(--accent);">{{ order.total | currency }}</span>
+          </div>
+        </div>
+        
+        <div style="margin-top: 25px; border-top: 1px solid var(--border); padding-top: 20px; font-size: 0.85rem;">
+          <p style="margin-bottom: 8px;"><strong>Delivery Address:</strong></p>
+          <p style="color: var(--text-secondary); line-height: 1.5;">{{ order.delivery_address }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  const urlParams = new URLSearchParams(window.location.search);
+  let orderId = urlParams.get('id') || "{{ order.id if order else '' }}";
+
+  // Check if we are running in static mode (or if orderId is still templates variable)
+  const isStaticMode = orderId.includes('{{') || window.location.pathname.endsWith('.html') || window.location.protocol === 'file:';
+  
+  if (isStaticMode) {
+    if (orderId.includes('{{') || !orderId) {
+      orderId = urlParams.get('id') || "1"; // default fallback to 1 if no query param
+    }
+  }
+
+  function refreshOrderStatus(status) {
+    const badge = document.getElementById('order-status-badge');
+    if (!badge) return;
+    badge.className = `status-pill ${status}`;
+    badge.innerText = status;
+    
+    // Clear styles
+    document.querySelectorAll('.progress-step').forEach(step => {
+      step.classList.remove('active', 'completed');
+    });
+    
+    const banner = document.getElementById('cancelled-banner');
+    const trackerContainer = document.getElementById('tracker-bar-container');
+    
+    if (banner) banner.style.display = 'none';
+    if (trackerContainer) trackerContainer.style.display = 'flex';
+    
+    const fill = document.getElementById('tracker-fill-progress');
+    
+    if (status === 'pending') {
+      document.getElementById('step-confirmed').classList.add('active');
+      if (fill) fill.style.width = '0%';
+    } else if (status === 'preparing') {
+      document.getElementById('step-confirmed').classList.add('completed');
+      document.getElementById('step-preparing').classList.add('active');
+      if (fill) fill.style.width = '33%';
+    } else if (status === 'on_the_way') {
+      document.getElementById('step-confirmed').classList.add('completed');
+      document.getElementById('step-preparing').classList.add('completed');
+      document.getElementById('step-shipping').classList.add('active');
+      if (fill) fill.style.width = '66%';
+    } else if (status === 'delivered') {
+      document.getElementById('step-confirmed').classList.add('completed');
+      document.getElementById('step-preparing').classList.add('completed');
+      document.getElementById('step-shipping').classList.add('completed');
+      document.getElementById('step-delivered').classList.add('completed');
+      if (fill) fill.style.width = '100%';
+    } else if (status === 'cancelled') {
+      if (trackerContainer) trackerContainer.style.display = 'none';
+      if (banner) banner.style.display = 'block';
+    }
+  }
+
+  // Poll order status
+  function pollStatus() {
+    if (!orderId) return;
+    
+    fetch(`/api/order/track/${orderId}`)
+    .then(res => res.json())
+    .then(data => {
+      if (data.success) {
+        refreshOrderStatus(data.status);
+      }
+    })
+    .catch(() => console.error("Error polling status"));
+  }
+
+  // Dynamic loader for static setups
+  function fetchAndRenderOrder() {
+    if (!orderId) return;
+    
+    fetch(`/api/order/detail/${orderId}`)
+    .then(res => res.json())
+    .then(data => {
+      if (data.success) {
+        const ord = data.order;
+        
+        // Update header & basic info
+        document.querySelector('.tracking-header h2').innerText = `Order #${ord.id}`;
+        document.querySelector('.tracking-header p').innerHTML = `
+          Ordered: ${ord.created_at} &bull; Payment: <strong style="text-transform: uppercase;">${ord.payment_method}</strong>
+        `;
+        
+        // Update status pill & visual steps
+        refreshOrderStatus(ord.status);
+        
+        // Update items receipt grid
+        const receiptBox = document.querySelector('.order-receipt-box');
+        let itemsHtml = '';
+        ord.items.forEach(item => {
+          itemsHtml += `
+            <div style="display: flex; justify-content: space-between; font-size: 0.9rem; margin-bottom: 10px;">
+              <span>${item.name} <strong style="color: var(--text-secondary); margin-left: 5px;">(x${item.quantity})</strong></span>
+              <span>$${(item.price_at_purchase * item.quantity).toFixed(2)}</span>
+            </div>
+          `;
+        });
+        
+        // Update totals
+        let discountHtml = '';
+        if (ord.discount > 0) {
+          discountHtml = `
+            <div style="display: flex; justify-content: space-between; margin-bottom: 5px; color: var(--success);">
+              <span data-trn="discount">Discount:</span>
+              <span>-$${parseFloat(ord.discount).toFixed(2)}</span>
+            </div>
+          `;
+        }
+        
+        receiptBox.innerHTML = `
+          <h3 style="font-family: var(--font-display); font-size: 1.2rem; margin-bottom: 15px; border-bottom: 1px solid var(--border); padding-bottom: 10px;" data-trn="items_receipt">Order Details</h3>
+          <div style="margin-bottom: 20px;">
+            ${itemsHtml}
+          </div>
+          <div style="border-top: 1px solid var(--border); padding-top: 15px; font-size: 0.9rem;">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 5px; color: var(--text-secondary);">
+              <span data-trn="subtotal">Subtotal:</span>
+              <span>$${parseFloat(ord.subtotal).toFixed(2)}</span>
+            </div>
+            ${discountHtml}
+            <div style="display: flex; justify-content: space-between; font-size: 1.1rem; font-weight: 700; margin-top: 10px; border-top: 1px dotted var(--border); padding-top: 10px;">
+              <span data-trn="total">Total Paid:</span>
+              <span style="color: var(--accent);">$${parseFloat(ord.total).toFixed(2)}</span>
+            </div>
+          </div>
+          <div style="margin-top: 25px; border-top: 1px solid var(--border); padding-top: 20px; font-size: 0.85rem;">
+            <p style="margin-bottom: 8px;"><strong>Delivery Address:</strong></p>
+            <p style="color: var(--text-secondary); line-height: 1.5;">${ord.delivery_address}</p>
+          </div>
+        `;
+        
+        // Retranslate if needed
+        const cachedLang = localStorage.getItem('gusto_lang') || 'en';
+        if (typeof setLanguage === 'function') setLanguage(cachedLang);
+      }
+    });
+  }
+
+  // Set initial status or load full order
+  if (isStaticMode) {
+    window.addEventListener('DOMContentLoaded', fetchAndRenderOrder);
+  } else {
+    refreshOrderStatus("{{ order.status if order else 'pending' }}");
+  }
+  
+  // Start polling every 5 seconds
+  setInterval(pollStatus, 5000);
+</script>
+{% endblock %}

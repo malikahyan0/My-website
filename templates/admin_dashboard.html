@@ -1,0 +1,524 @@
+{% extends 'base.html' %}
+
+{% block styles %}
+<link rel="stylesheet" href="/static/css/admin.css">
+<style>
+  /* Extra inline overrides for clean sidebar layouts */
+  main {
+    min-height: auto !important;
+  }
+  footer {
+    display: none !important; /* Hide footer in admin dashboard to focus workspace */
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="admin-wrapper">
+  <!-- Sidebar Navigation -->
+  <aside class="admin-sidebar">
+    <div class="admin-sidebar-menu">
+      <div class="admin-menu-item active" onclick="switchAdminPanel('analytics', this)">
+        <i class="fa-solid fa-chart-pie"></i> <span data-trn="overview">Overview</span>
+      </div>
+      <div class="admin-menu-item" onclick="switchAdminPanel('orders', this)">
+        <i class="fa-solid fa-pizza-slice"></i> <span data-trn="orders_tab">Orders</span>
+      </div>
+      <div class="admin-menu-item" onclick="switchAdminPanel('reservations', this)">
+        <i class="fa-solid fa-calendar-check"></i> <span data-trn="bookings_tab">Bookings</span>
+      </div>
+      <div class="admin-menu-item" onclick="switchAdminPanel('menu-crud', this)">
+        <i class="fa-solid fa-utensils"></i> <span data-trn="menu_editor">Menu Editor</span>
+      </div>
+      <div class="admin-menu-item" onclick="switchAdminPanel('reviews', this)">
+        <i class="fa-solid fa-star-half-stroke"></i> <span data-trn="reviews_tab">Reviews</span>
+      </div>
+      <div class="admin-menu-item" onclick="switchAdminPanel('coupons', this)">
+        <i class="fa-solid fa-ticket"></i> <span data-trn="coupons_tab">Coupons</span>
+      </div>
+      <div class="admin-menu-item" onclick="switchAdminPanel('misc', this)">
+        <i class="fa-solid fa-envelope-open-text"></i> <span data-trn="messages_tab">Messages</span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Content Workspace -->
+  <section class="admin-content">
+    
+    <!-- 1. Overview Panel -->
+    <div class="admin-panel active" id="panel-analytics">
+      <div class="admin-page-header">
+        <h2 data-trn="analytics_overview">Analytics Overview</h2>
+      </div>
+      
+      <!-- Metrics Grid -->
+      <div class="stats-grid">
+        <!-- Revenue -->
+        <div class="stat-card">
+          <div class="stat-info">
+            <h4 data-trn="total_sales">Total Sales</h4>
+            <div class="stat-val" id="sales-kpi">$0.00</div>
+          </div>
+          <div class="stat-icon"><i class="fa-solid fa-coins"></i></div>
+        </div>
+        
+        <!-- Orders Count -->
+        <div class="stat-card">
+          <div class="stat-info">
+            <h4 data-trn="total_orders">Total Orders</h4>
+            <div class="stat-val" id="orders-kpi">0</div>
+          </div>
+          <div class="stat-icon"><i class="fa-solid fa-truck-ramp-box"></i></div>
+        </div>
+        
+        <!-- Bookings Count -->
+        <div class="stat-card">
+          <div class="stat-info">
+            <h4 data-trn="total_reservations">Reservations</h4>
+            <div class="stat-val" id="reservations-kpi">0</div>
+          </div>
+          <div class="stat-icon"><i class="fa-solid fa-chair"></i></div>
+        </div>
+
+        <!-- Mailing List -->
+        <div class="stat-card">
+          <div class="stat-info">
+            <h4 data-trn="subscribers">Subscribers</h4>
+            <div class="stat-val" id="subs-kpi">0</div>
+          </div>
+          <div class="stat-icon"><i class="fa-solid fa-paper-plane"></i></div>
+        </div>
+      </div>
+
+      <!-- Sales Trend Bar Chart (SVG-based) -->
+      <div class="chart-container">
+        <h3 data-trn="monthly_revenue">Revenues (Current Year Trend)</h3>
+        <div class="mock-chart">
+          <!-- January -->
+          <div class="chart-bar-wrapper">
+            <div class="chart-bar" style="height: 60px;"><span class="chart-bar-val">$1.2k</span></div>
+            <div class="chart-label">Jan</div>
+          </div>
+          <!-- February -->
+          <div class="chart-bar-wrapper">
+            <div class="chart-bar" style="height: 90px;"><span class="chart-bar-val">$1.8k</span></div>
+            <div class="chart-label">Feb</div>
+          </div>
+          <!-- March -->
+          <div class="chart-bar-wrapper">
+            <div class="chart-bar" style="height: 140px;"><span class="chart-bar-val">$2.8k</span></div>
+            <div class="chart-label">Mar</div>
+          </div>
+          <!-- April -->
+          <div class="chart-bar-wrapper">
+            <div class="chart-bar" style="height: 110px;"><span class="chart-bar-val">$2.2k</span></div>
+            <div class="chart-label">Apr</div>
+          </div>
+          <!-- May -->
+          <div class="chart-bar-wrapper">
+            <div class="chart-bar" style="height: 170px;"><span class="chart-bar-val">$3.4k</span></div>
+            <div class="chart-label">May</div>
+          </div>
+          <!-- June (Active) -->
+          <div class="chart-bar-wrapper">
+            <div class="chart-bar" style="height: 210px; background-color: var(--accent-hover);"><span class="chart-bar-val" style="color: var(--accent);">$4.2k</span></div>
+            <div class="chart-label" style="font-weight: 700;">Jun</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2. Manage Orders Panel -->
+    <div class="admin-panel" id="panel-orders">
+      <div class="admin-page-header">
+        <h2 data-trn="order_management">Order Management</h2>
+      </div>
+      <div class="table-responsive">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th data-trn="customer">Customer</th>
+              <th data-trn="delivery_address_label">Address</th>
+              <th data-trn="payment">Payment</th>
+              <th data-trn="total">Total</th>
+              <th data-trn="status">Status</th>
+              <th data-trn="actions">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for order in orders %}
+              <tr>
+                <td>#{{ order.id }}</td>
+                <td>
+                  <strong>{{ order.customer_name }}</strong><br>
+                  <span style="font-size:0.75rem; color:var(--text-secondary);">{{ order.customer_phone }}</span>
+                </td>
+                <td>{{ order.delivery_address }}</td>
+                <td><span style="text-transform: uppercase; font-size:0.8rem;">{{ order.payment_method }}</span></td>
+                <td style="font-weight: 700; color: var(--accent);">{{ order.total | currency }}</td>
+                <td>
+                  <span class="status-pill {{ order.status }}" id="pill-order-{{ order.id }}">{{ order.status }}</span>
+                </td>
+                <td>
+                  <select onchange="updateOrderStatus({{ order.id }}, this.value)" style="padding: 6px 10px; border-radius: 4px; border: 1px solid var(--border); background: var(--bg-secondary); color: var(--text-primary); cursor: pointer;">
+                    <option value="pending" {% if order.status == 'pending' %}selected{% endif %}>Pending</option>
+                    <option value="preparing" {% if order.status == 'preparing' %}selected{% endif %}>Preparing</option>
+                    <option value="on_the_way" {% if order.status == 'on_the_way' %}selected{% endif %}>On the Way</option>
+                    <option value="delivered" {% if order.status == 'delivered' %}selected{% endif %}>Delivered</option>
+                    <option value="cancelled" {% if order.status == 'cancelled' %}selected{% endif %}>Cancelled</option>
+                  </select>
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- 3. Manage Reservations Panel -->
+    <div class="admin-panel" id="panel-reservations">
+      <div class="admin-page-header">
+        <h2 data-trn="booking_management">Reservation Pipeline</h2>
+      </div>
+      <div class="table-responsive">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th data-trn="customer">Customer</th>
+              <th data-trn="date">Date</th>
+              <th data-trn="time">Time</th>
+              <th data-trn="guests">Guests</th>
+              <th data-trn="special_requests_label">Special Notes</th>
+              <th data-trn="status">Status</th>
+              <th data-trn="actions">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for r in reservations %}
+              <tr>
+                <td>#{{ r.id }}</td>
+                <td>
+                  <strong>{{ r.customer_name }}</strong><br>
+                  <span style="font-size:0.75rem; color:var(--text-secondary);">{{ r.customer_phone }}</span>
+                </td>
+                <td>{{ r.booking_date }}</td>
+                <td>{{ r.booking_time }}</td>
+                <td><strong>{{ r.guest_count }}</strong></td>
+                <td>{{ r.special_requests or '-' }}</td>
+                <td>
+                  <span class="status-pill {{ r.status }}" id="pill-reserve-{{ r.id }}">{{ r.status }}</span>
+                </td>
+                <td>
+                  <div style="display: flex; gap: 8px;">
+                    <button class="btn btn-primary" onclick="setReservationStatus({{ r.id }}, 'confirmed')" style="padding: 6px 12px; font-size: 0.75rem;"><i class="fa-solid fa-check"></i></button>
+                    <button class="btn btn-secondary" onclick="setReservationStatus({{ r.id }}, 'completed')" style="padding: 6px 12px; font-size: 0.75rem;"><i class="fa-solid fa-check-double"></i></button>
+                    <button class="btn btn-accent-outline" onclick="setReservationStatus({{ r.id }}, 'cancelled')" style="padding: 6px 12px; font-size: 0.75rem; color: var(--error) !important; border-color: var(--error);"><i class="fa-solid fa-ban"></i></button>
+                  </div>
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- 4. Menu CRUD Editor -->
+    <div class="admin-panel" id="panel-menu-crud">
+      <div class="admin-page-header">
+        <h2 data-trn="menu_management">Menu Management</h2>
+      </div>
+
+      <!-- Add New Item Form -->
+      <div class="form-card">
+        <h3 data-trn="add_dish_title"><i class="fa-solid fa-plus" style="color: var(--accent);"></i> Add New Menu Item</h3>
+        <form id="add-menu-item-form">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="new-item-name" data-trn="name_label">Item Name</label>
+              <input type="text" id="new-item-name" required placeholder="Truffle Tagliatelle">
+            </div>
+            <div class="form-group">
+              <label for="new-item-price" data-trn="price">Price ($)</label>
+              <input type="number" id="new-item-price" step="0.01" required placeholder="18.50">
+            </div>
+          </div>
+          
+          <div class="form-row">
+            <div class="form-group">
+              <label for="new-item-category" data-trn="category">Category</label>
+              <select id="new-item-category" required>
+                <option value="coffee">Coffee & Beverages</option>
+                <option value="fastfood">Fast Food</option>
+                <option value="italian">Italian Cuisine</option>
+                <option value="dessert">Dessert</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="new-item-img">Image URL</label>
+              <input type="text" id="new-item-img" value="/static/images/hero_coffee.png">
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label for="new-item-desc" data-trn="description">Description</label>
+            <input type="text" id="new-item-desc" required placeholder="Brief appetizing description of flavors...">
+          </div>
+          
+          <div class="form-group" style="margin-bottom: 25px;">
+            <label for="new-item-ingredients" data-trn="ingredients_label">Ingredients (Comma Separated)</label>
+            <input type="text" id="new-item-ingredients" placeholder="Fresh Pasta, Truffle Butter, Porcini Mushrooms">
+          </div>
+          
+          <div style="display: flex; gap: 30px; margin-bottom: 25px;">
+            <label style="display: flex; align-items: center; gap: 8px; font-size: 0.85rem; cursor: pointer;">
+              <input type="checkbox" id="new-item-popular" value="1" style="width: auto;"> <span data-trn="popular">Popular (Feature on Homepage)</span>
+            </label>
+            <label style="display: flex; align-items: center; gap: 8px; font-size: 0.85rem; cursor: pointer;">
+              <input type="checkbox" id="new-item-available" value="1" checked style="width: auto;"> <span data-trn="available">In Stock / Available</span>
+            </label>
+          </div>
+          
+          <button type="submit" class="btn btn-primary" data-trn="add_dish_btn">Add Item to Menu</button>
+        </form>
+      </div>
+
+      <!-- Menu Items Grid Table -->
+      <div class="table-responsive">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th data-trn="dish">Dish</th>
+              <th data-trn="category">Category</th>
+              <th data-trn="price">Price</th>
+              <th data-trn="popular">Popular</th>
+              <th data-trn="available">Available</th>
+              <th data-trn="actions">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for item in menu_items %}
+              <tr id="row-menu-{{ item.id }}">
+                <td>#{{ item.id }}</td>
+                <td>
+                  <strong>{{ item.name }}</strong><br>
+                  <span style="font-size:0.75rem; color:var(--text-secondary); max-width: 250px; display:block; text-overflow:ellipsis; overflow:hidden; white-space:nowrap;">{{ item.description }}</span>
+                </td>
+                <td style="text-transform: capitalize;">{{ item.category }}</td>
+                <td style="font-weight:700;">{{ item.price | currency }}</td>
+                <td>{% if item.is_popular %}Yes{% else %}No{% endif %}</td>
+                <td>{% if item.is_available %}In Stock{% else %}Out of Stock{% endif %}</td>
+                <td>
+                  <button class="btn btn-accent-outline" onclick="deleteMenuItem({{ item.id }})" style="padding: 6px 12px; font-size: 0.75rem; color: var(--error) !important; border-color: var(--error);"><i class="fa-solid fa-trash-can"></i></button>
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- 5. Reviews Moderation Panel -->
+    <div class="admin-panel" id="panel-reviews">
+      <div class="admin-page-header">
+        <h2 data-trn="review_moderation">Review Moderation</h2>
+      </div>
+      
+      <div class="table-responsive">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th data-trn="customer">Author</th>
+              <th data-trn="rating_label">Rating</th>
+              <th data-trn="comment_label">Comment</th>
+              <th data-trn="status">Status</th>
+              <th data-trn="actions">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for rev in reviews %}
+              <tr id="row-review-{{ rev.id }}">
+                <td>#{{ rev.id }}</td>
+                <td>
+                  <strong>{{ rev.reviewer_name }}</strong><br>
+                  <span style="font-size:0.75rem; color:var(--text-secondary);">{{ rev.reviewer_email }}</span>
+                </td>
+                <td>
+                  <span style="color:var(--accent); font-weight: 700;">{{ rev.rating }} / 5</span>
+                </td>
+                <td>{{ rev.comment }}</td>
+                <td>
+                  {% if rev.is_approved %}
+                    <span class="status-pill confirmed" id="pill-review-{{ rev.id }}">Approved</span>
+                  {% else %}
+                    <span class="status-pill pending" id="pill-review-{{ rev.id }}">Pending</span>
+                  {% endif %}
+                </td>
+                <td>
+                  <div style="display: flex; gap: 8px;">
+                    <button class="btn btn-primary" onclick="moderateReview({{ rev.id }}, 'approve')" style="padding: 6px 12px; font-size: 0.75rem;"><i class="fa-solid fa-check"></i> Approve</button>
+                    <button class="btn btn-secondary" onclick="moderateReview({{ rev.id }}, 'disapprove')" style="padding: 6px 12px; font-size: 0.75rem;">Disapprove</button>
+                    <button class="btn btn-accent-outline" onclick="moderateReview({{ rev.id }}, 'delete')" style="padding: 6px 12px; font-size: 0.75rem; color: var(--error) !important; border-color: var(--error);"><i class="fa-solid fa-trash-can"></i></button>
+                  </div>
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- 6. Coupon Codes Panel -->
+    <div class="admin-panel" id="panel-coupons">
+      <div class="admin-page-header">
+        <h2 data-trn="coupon_management">Promo Coupons</h2>
+      </div>
+
+      <!-- Add Coupon form -->
+      <div class="form-card">
+        <h3 data-trn="create_coupon_title"><i class="fa-solid fa-plus" style="color: var(--accent);"></i> Create Promo Coupon</h3>
+        <form id="create-coupon-form">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="new-coupon-code">Coupon Code (Uppercase)</label>
+              <input type="text" id="new-coupon-code" required placeholder="SUMMER25">
+            </div>
+            <div class="form-group">
+              <label for="new-coupon-value">Discount Value</label>
+              <input type="number" id="new-coupon-value" step="0.1" required placeholder="20.0">
+            </div>
+          </div>
+          
+          <div class="form-row">
+            <div class="form-group">
+              <label for="new-coupon-type">Discount Type</label>
+              <select id="new-coupon-type" required>
+                <option value="percentage">Percentage (%)</option>
+                <option value="flat">Flat Cash ($)</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="new-coupon-min">Min Order Requirement ($)</label>
+              <input type="number" id="new-coupon-min" step="0.01" value="0.00">
+            </div>
+          </div>
+          
+          <div class="form-group" style="margin-bottom: 25px;">
+            <label for="new-coupon-expiry">Expiry Date</label>
+            <input type="date" id="new-coupon-expiry" required>
+          </div>
+          
+          <button type="submit" class="btn btn-primary" data-trn="create_coupon_btn">Create Coupon</button>
+        </form>
+      </div>
+
+      <!-- Coupon list -->
+      <div class="table-responsive">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Code</th>
+              <th>Type</th>
+              <th>Value</th>
+              <th>Min Order</th>
+              <th>Expiry</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for c in coupons %}
+              <tr id="row-coupon-{{ c.id }}">
+                <td>#{{ c.id }}</td>
+                <td style="font-weight: 700;">{{ c.code }}</td>
+                <td style="text-transform: capitalize;">{{ c.discount_type }}</td>
+                <td>{{ c.discount_value }}{% if c.discount_type == 'percentage' %}%{% else %}${%.2f}{% endif %}</td>
+                <td>{{ c.min_order_value | currency }}</td>
+                <td>{{ c.expiry_date }}</td>
+                <td>
+                  <button class="btn btn-accent-outline" onclick="deleteCoupon({{ c.id }})" style="padding: 6px 12px; font-size: 0.75rem; color: var(--error) !important; border-color: var(--error);"><i class="fa-solid fa-trash-can"></i></button>
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- 7. Misc Messages, Newsletter, Feedback Panel -->
+    <div class="admin-panel" id="panel-misc">
+      <div class="admin-page-header">
+        <h2 data-trn="messages_enquiries">Enquiries & Subscribers</h2>
+      </div>
+
+      <h3 style="font-family: var(--font-display); font-size: 1.3rem; margin-bottom: 20px;" data-trn="customer_messages"><i class="fa-regular fa-comment-dots" style="color: var(--accent);"></i> Customer Messages</h3>
+      <div class="table-responsive" style="margin-bottom: 50px;">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th data-trn="customer">Author</th>
+              <th>Subject</th>
+              <th>Message</th>
+              <th>Date</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for c in contacts %}
+              <tr>
+                <td>#{{ c.id }}</td>
+                <td>
+                  <strong>{{ c.name }}</strong><br>
+                  <span style="font-size:0.75rem; color:var(--text-secondary);">{{ c.email }}</span>
+                </td>
+                <td><strong>{{ c.subject }}</strong></td>
+                <td>{{ c.message }}</td>
+                <td>{{ c.created_at }}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+      <h3 style="font-family: var(--font-display); font-size: 1.3rem; margin-bottom: 20px;" data-trn="newsletter_subs"><i class="fa-solid fa-paper-plane" style="color: var(--accent);"></i> Newsletter Subscribers</h3>
+      <div class="table-responsive">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Email</th>
+              <th>Date Subscribed</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for s in subscribers %}
+              <tr>
+                <td>#{{ s.id }}</td>
+                <td><strong>{{ s.email }}</strong></td>
+                <td>{{ s.subscribed_at }}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </section>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="/static/js/admin.js"></script>
+<script>
+  // Restrict past dates on coupon date selector
+  const couponExpiryDateInput = document.getElementById('new-coupon-expiry');
+  if(couponExpiryDateInput) {
+    const today = new Date().toISOString().split('T')[0];
+    couponExpiryDateInput.setAttribute('min', today);
+    couponExpiryDateInput.value = today;
+  }
+</script>
+{% endblock %}

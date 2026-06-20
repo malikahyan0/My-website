@@ -1,0 +1,361 @@
+{% extends 'base.html' %}
+
+{% block styles %}
+<style>
+  /* Menu Layout Styles */
+  .menu-header-banner {
+    background: linear-gradient(to right, rgba(0,0,0,0.7), rgba(0,0,0,0.85)), url('/static/images/restaurant_interior.png') center/cover;
+    height: 300px;
+    margin-top: var(--header-height);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #ffffff;
+    text-align: center;
+  }
+  .menu-header-banner h1 {
+    font-family: var(--font-display);
+    font-size: 3rem;
+  }
+
+  /* Filters Section */
+  .filter-sidebar {
+    background-color: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 25px;
+    box-shadow: 0 4px 15px var(--shadow);
+    height: fit-content;
+  }
+  .filter-title {
+    font-size: 1rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+  }
+  .category-list-filter button {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    padding: 10px 15px;
+    background: transparent;
+    color: var(--text-primary);
+    font-size: 0.9rem;
+    font-weight: 500;
+    text-align: left;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-bottom: 5px;
+    transition: var(--transition-fast);
+  }
+  .category-list-filter button:hover,
+  .category-list-filter button.active {
+    background-color: var(--accent-light);
+    color: var(--accent);
+  }
+
+  /* Grid Layout */
+  .menu-page-grid {
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    gap: 40px;
+    margin-top: 50px;
+  }
+
+  .items-list-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 30px;
+  }
+
+  /* AI Recommendation Bar */
+  .ai-recommend-bar {
+    background: linear-gradient(135deg, var(--bg-tertiary), var(--bg-secondary));
+    border: 1px solid var(--accent);
+    border-radius: 8px;
+    padding: 25px;
+    margin-bottom: 40px;
+    box-shadow: 0 4px 15px rgba(197, 168, 128, 0.1);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+  }
+  .ai-recommend-text h3 {
+    font-family: var(--font-display);
+    font-size: 1.3rem;
+    margin-bottom: 5px;
+  }
+  .ai-recommend-text p {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+  }
+
+  @media (max-width: 992px) {
+    .menu-page-grid {
+      grid-template-columns: 1fr;
+    }
+    .filter-sidebar {
+      position: sticky;
+      top: 90px;
+      z-index: 100;
+    }
+    .category-list-filter {
+      display: flex;
+      gap: 10px;
+      overflow-x: auto;
+      padding-bottom: 10px;
+    }
+    .category-list-filter button {
+      width: auto;
+      white-space: nowrap;
+      margin-bottom: 0;
+    }
+    .ai-recommend-bar {
+      flex-direction: column;
+      text-align: center;
+    }
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+  <!-- Header Banner -->
+  <section class="menu-header-banner">
+    <div>
+      <h1 data-trn="menu_banner_title">Our Gourmet Menu</h1>
+      <p style="color: var(--accent); letter-spacing: 2px; text-transform: uppercase; font-size: 0.9rem;" data-trn="menu_banner_subtitle">Authentic Italian Flavors & Artisan Coffee</p>
+    </div>
+  </section>
+
+  <div class="container section-padding">
+    
+    <!-- AI Recommendation Spotlight -->
+    <div class="ai-recommend-bar">
+      <div class="ai-recommend-text">
+        <h3 data-trn="ai_title"><i class="fa-solid fa-wand-magic-sparkles" style="color: var(--accent); margin-right: 8px;"></i> Smart AI Taste Matcher</h3>
+        <p data-trn="ai_subtitle">Can't decide? Answer a quick 2-question quiz and let our artificial intelligence match your craving!</p>
+      </div>
+      <button class="btn btn-primary" id="open-ai-quiz-btn" data-trn="find_match_btn">Match My Craving</button>
+    </div>
+
+    <!-- Main Grid Workspace -->
+    <div class="menu-page-grid">
+      <!-- Search & Filters Sidebar -->
+      <aside class="filter-sidebar">
+        <!-- Live Search -->
+        <div class="form-group" style="margin-bottom: 25px;">
+          <label for="menu-search-input" data-trn="search_dish">Search Dishes</label>
+          <div style="position: relative;">
+            <input type="text" id="menu-search-input" placeholder="Espresso, Lasagna..." style="padding-right: 40px;">
+            <i class="fa-solid fa-magnifying-glass" style="position: absolute; right: 15px; top: 14px; color: var(--text-secondary);"></i>
+          </div>
+        </div>
+
+        <!-- Categories List -->
+        <div class="category-list-filter" style="margin-bottom: 30px;">
+          <h4 class="filter-title" data-trn="categories">Categories</h4>
+          <button class="active" onclick="filterByCategory('all', this)" data-trn="all_categories">All Items</button>
+          <button onclick="filterByCategory('coffee', this)" data-trn="coffee_bevs">Coffee & Beverages</button>
+          <button onclick="filterByCategory('fastfood', this)" data-trn="fast_food">Fast Food</button>
+          <button onclick="filterByCategory('italian', this)" data-trn="italian_cuisine">Italian Cuisine</button>
+          <button onclick="filterByCategory('dessert', this)" data-trn="desserts">Desserts</button>
+        </div>
+
+        <!-- Dietary Preferences -->
+        <div style="margin-bottom: 30px;">
+          <h4 class="filter-title" data-trn="dietary">Dietary</h4>
+          <div style="display: flex; flex-direction: column; gap: 10px;">
+            <label style="display: flex; align-items: center; gap: 10px; font-size: 0.85rem; cursor: pointer;">
+              <input type="checkbox" id="diet-veg-only" onchange="applyFilters()"> <span data-trn="vegetarian">Vegetarian</span>
+            </label>
+            <label style="display: flex; align-items: center; gap: 10px; font-size: 0.85rem; cursor: pointer;">
+              <input type="checkbox" id="diet-gf-only" onchange="applyFilters()"> <span data-trn="gluten_free">Gluten Free Option</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Price Range -->
+        <div>
+          <h4 class="filter-title" data-trn="price_range">Price Range</h4>
+          <input type="range" id="price-range-slider" min="0" max="40" step="1" value="40" oninput="updatePriceSliderVal(this.value)" style="width:100%; cursor: pointer;">
+          <div style="display: flex; justify-content: space-between; font-size: 0.8rem; margin-top: 8px;">
+            <span>$0.00</span>
+            <span id="price-slider-label" style="font-weight: 700; color: var(--accent);">$40.00</span>
+          </div>
+        </div>
+      </aside>
+
+      <!-- Dishes Grid -->
+      <section style="flex: 1;">
+        <div class="items-list-grid" id="dishes-items-grid">
+          {% for item in items %}
+            <div class="featured-card dish-menu-card" 
+                 data-category="{{ item.category }}" 
+                 data-price="{{ item.price }}" 
+                 data-desc="{{ item.description }} {{ item.name }} {{ item.ingredients }}">
+              <div class="card-img-wrapper">
+                <img src="{{ item.image_url }}" alt="{{ item.name }}">
+                {% if item.is_popular %}
+                  <span class="card-tag" data-trn="popular">Popular</span>
+                {% endif %}
+              </div>
+              <div class="card-body">
+                <h3 class="card-title">{{ item.name }}</h3>
+                <p class="card-desc">{{ item.description }}</p>
+                <div style="font-size: 0.75rem; color: var(--text-secondary); margin-bottom: 15px;">
+                  <strong data-trn="ingredients_label">Ingredients:</strong> {{ item.ingredients }}
+                </div>
+                <div class="card-price-row">
+                  <span class="card-price">{{ item.price | currency }}</span>
+                  <button class="btn btn-primary quick-add-btn" 
+                          data-id="{{ item.id }}" 
+                          data-name="{{ item.name }}" 
+                          data-price="{{ item.price }}" 
+                          data-img="{{ item.image_url }}"
+                          data-trn="add_to_cart_btn">
+                    Add to Cart
+                  </button>
+                </div>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+        
+        <!-- Empty State for Search -->
+        <div id="menu-empty-state" class="text-center" style="display: none; padding: 60px 0; color: var(--text-secondary);">
+          <i class="fa-solid fa-face-frown" style="font-size: 3rem; margin-bottom: 20px; color: var(--border);"></i>
+          <h3 data-trn="no_dishes_found">No items found</h3>
+          <p data-trn="no_dishes_sub">Try adjusting your filters or search keywords.</p>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <!-- AI Recommendation Modal -->
+  <div class="modal-overlay" id="ai-quiz-modal-overlay">
+    <div class="modal-content" style="max-width: 500px;">
+      <button class="close-modal-btn" id="close-ai-quiz-btn" aria-label="Close AI Quiz Box"><i class="fa-solid fa-xmark"></i></button>
+      <h3 data-trn="ai_finder_title"><i class="fa-solid fa-wand-magic-sparkles" style="color: var(--accent);"></i> AI Dish Selector</h3>
+      
+      <div id="ai-quiz-questions">
+        <p style="font-size: 0.9rem; margin-bottom: 20px; color: var(--text-secondary);" data-trn="ai_finder_intro">Answer these two quick questions to find your absolute match for today's meal!</p>
+        
+        <!-- Question 1 -->
+        <div class="form-group" style="margin-bottom: 20px;">
+          <label data-trn="q1_label">1. What category are you in the mood for?</label>
+          <select id="ai-q-category">
+            <option value="all">Surprise Me (Any Category)</option>
+            <option value="coffee">Coffee & Specialties</option>
+            <option value="italian">Authentic Italian Cuisine</option>
+            <option value="fastfood">Gourmet Fast Food</option>
+            <option value="dessert">Sweet Desserts</option>
+          </select>
+        </div>
+        
+        <!-- Question 2 -->
+        <div class="form-group" style="margin-bottom: 30px;">
+          <label data-trn="q2_label">2. What flavor palette matches your craving?</label>
+          <select id="ai-q-flavor">
+            <option value="savory">Savory & Cheesy (Comfort food)</option>
+            <option value="sweet">Sweet & Rich (Satisfy tooth)</option>
+            <option value="bold">Bold & Spicy (Calabrian chili, espresso)</option>
+            <option value="light">Light & Refreshing (Seafood, fresh herbs)</option>
+          </select>
+        </div>
+        
+        <button class="btn btn-primary" style="width: 100%;" id="submit-ai-quiz-btn" data-trn="get_recs_btn">Reveal Matches</button>
+      </div>
+      
+      <!-- AI Results Display -->
+      <div id="ai-quiz-results" style="display: none;">
+        <h4 style="font-family: var(--font-display); font-size: 1.2rem; margin-bottom: 15px; border-bottom: 1px solid var(--border); padding-bottom: 8px;" data-trn="your_matches">Your Perfect Matches:</h4>
+        <div id="ai-recommendations-list" style="display: flex; flex-direction: column; gap: 15px; margin-bottom: 25px;">
+          <!-- Injected dynamically -->
+        </div>
+        <button class="btn btn-secondary" style="width: 100%;" id="retake-ai-quiz-btn" data-trn="try_again">Try Different Palette</button>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+
+{% block scripts %}
+<script src="/static/js/ai-recommend.js"></script>
+<script>
+  let activeCategory = 'all';
+
+  function filterByCategory(category, btnElement) {
+    // Update active button state
+    document.querySelectorAll('.category-list-filter button').forEach(btn => btn.classList.remove('active'));
+    if (btnElement) {
+      btnElement.classList.add('active');
+    }
+    
+    activeCategory = category;
+    applyFilters();
+  }
+
+  function updatePriceSliderVal(val) {
+    document.getElementById('price-slider-label').innerText = `$${parseFloat(val).toFixed(2)}`;
+    applyFilters();
+  }
+
+  function applyFilters() {
+    const searchVal = document.getElementById('menu-search-input').value.toLowerCase();
+    const isVegOnly = document.getElementById('diet-veg-only').checked;
+    const isGfOnly = document.getElementById('diet-gf-only').checked;
+    const maxPrice = parseFloat(document.getElementById('price-range-slider').value);
+    
+    const cards = document.querySelectorAll('.dish-menu-card');
+    let visibleCount = 0;
+    
+    cards.forEach(card => {
+      const category = card.getAttribute('data-category');
+      const price = parseFloat(card.getAttribute('data-price'));
+      const textContent = card.getAttribute('data-desc').toLowerCase();
+      
+      // Category Match
+      const categoryMatch = (activeCategory === 'all' || category === activeCategory);
+      // Price Match
+      const priceMatch = (price <= maxPrice);
+      // Search Match
+      const searchMatch = (searchVal === '' || textContent.includes(searchVal));
+      
+      // Dietary checks
+      let dietMatch = true;
+      if (isVegOnly && !textContent.includes('gelato') && !textContent.includes('pizza') && !textContent.includes('pasta') && !textContent.includes('cannoli') && !textContent.includes('panna cotta') && !textContent.includes('potatoes') && !textContent.includes('truffle oil') && !textContent.includes('cappuccino') && !textContent.includes('affogato') && !textContent.includes('espresso') && !textContent.includes('honey')) {
+        // Fallback checks for burger / chicken
+        if (textContent.includes('beef') || textContent.includes('chicken') || textContent.includes('shrimp') || textContent.includes('clams') || textContent.includes('mussels') || textContent.includes('ragù') || textContent.includes('meat')) {
+          dietMatch = false;
+        }
+      }
+      if (isGfOnly) {
+        // Simple gluten checks: exclude pasta, dough, lasagna, bun, Ladyfingers, cannoli shell
+        if (textContent.includes('pasta') || textContent.includes('dough') || textContent.includes('lasagna') || textContent.includes('bun') || textContent.includes('ladyfingers') || textContent.includes('shell') || textContent.includes('fettuccine') || textContent.includes('linguine')) {
+          dietMatch = false;
+        }
+      }
+      
+      if (categoryMatch && priceMatch && searchMatch && dietMatch) {
+        card.style.display = 'flex';
+        visibleCount++;
+      } else {
+        card.style.display = 'none';
+      }
+    });
+    
+    const emptyState = document.getElementById('menu-empty-state');
+    if (visibleCount === 0) {
+      emptyState.style.display = 'block';
+    } else {
+      emptyState.style.display = 'none';
+    }
+  }
+
+  // Bind live search
+  document.getElementById('menu-search-input').addEventListener('input', applyFilters);
+</script>
+{% endblock %}

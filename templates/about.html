@@ -1,0 +1,265 @@
+{% extends 'base.html' %}
+
+{% block styles %}
+<style>
+  /* About Page Custom CSS */
+  .about-banner {
+    background: linear-gradient(to right, rgba(0,0,0,0.7), rgba(0,0,0,0.85)), url('/static/images/restaurant_interior.png') center/cover;
+    height: 300px;
+    margin-top: var(--header-height);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #ffffff;
+    text-align: center;
+  }
+  .about-banner h1 {
+    font-family: var(--font-display);
+    font-size: 3rem;
+  }
+
+  /* Timeline */
+  .timeline {
+    position: relative;
+    max-width: 800px;
+    margin: 50px auto 0 auto;
+    padding: 20px 0;
+  }
+  .timeline::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 50%;
+    width: 2px;
+    background-color: var(--border);
+    transform: translateX(-50%);
+  }
+  .timeline-item {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    margin-bottom: 40px;
+    position: relative;
+  }
+  .timeline-item:nth-child(even) {
+    flex-direction: row-reverse;
+  }
+  .timeline-dot {
+    position: absolute;
+    left: 50%;
+    top: 15px;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background-color: var(--accent);
+    transform: translateX(-50%);
+    border: 3px solid var(--bg-primary);
+  }
+  .timeline-content {
+    width: 45%;
+    background-color: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 25px;
+    box-shadow: 0 4px 15px var(--shadow);
+  }
+  .timeline-date {
+    font-family: var(--font-display);
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--accent);
+    margin-bottom: 8px;
+  }
+
+  /* Chef Cards */
+  .chef-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 30px;
+    margin-top: 40px;
+  }
+  .chef-card {
+    background-color: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px var(--shadow);
+    text-align: center;
+    transition: var(--transition-smooth);
+  }
+  .chef-card:hover {
+    transform: translateY(-5px);
+    border-color: var(--accent);
+  }
+  .chef-img {
+    height: 320px;
+    width: 100%;
+    object-fit: cover;
+    filter: grayscale(30%);
+    transition: var(--transition-smooth);
+  }
+  .chef-card:hover .chef-img {
+    filter: grayscale(0%);
+  }
+  .chef-info {
+    padding: 25px;
+  }
+  .chef-name {
+    font-family: var(--font-display);
+    font-size: 1.3rem;
+    font-weight: 600;
+    margin-bottom: 5px;
+  }
+  .chef-role {
+    font-size: 0.8rem;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    font-weight: 600;
+    margin-bottom: 15px;
+  }
+  .chef-bio {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    line-height: 1.6;
+  }
+
+  @media (max-width: 768px) {
+    .timeline::before {
+      left: 20px;
+    }
+    .timeline-item {
+      flex-direction: row !important;
+      margin-bottom: 30px;
+    }
+    .timeline-dot {
+      left: 20px;
+    }
+    .timeline-content {
+      width: calc(100% - 50px);
+      margin-left: 40px;
+    }
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+  <!-- About Banner -->
+  <section class="about-banner">
+    <div>
+      <h1 data-trn="about_banner_title">Our Culinary Philosophy</h1>
+      <p style="color: var(--accent); letter-spacing: 2px; text-transform: uppercase; font-size: 0.9rem;" data-trn="about_banner_subtitle">Tradition, Craftsmanship & Excellence</p>
+    </div>
+  </section>
+
+  <!-- Narrative Section -->
+  <section class="section-padding container">
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 50px; align-items: center;">
+      <div>
+        <span class="section-subtitle" data-trn="our_roots">Our Roots</span>
+        <h2 class="section-title" data-trn="story_title">An Umbrian Family Recipe</h2>
+        <div class="divider" style="margin-left: 0;"></div>
+        <p style="margin-bottom: 20px; color: var(--text-secondary); line-height: 1.8;" data-trn="about_p1">
+          Gusto Italiano started three decades ago as a small family bakery in Perugia, Italy, famous for its hand-kneaded sourdough breads and slow-roasted coffee beans. Over the years, the family moved across oceans, bringing with them ancient sourdough starters, San Marzano secrets, and the dream of marrying Italian fine-dining with the booming third-wave specialty coffee movement.
+        </p>
+        <p style="color: var(--text-secondary); line-height: 1.8;" data-trn="about_p2">
+          Today, we maintain the exact same rigor. We source our organic olive oils directly from family orchards in Umbria, bake our sourdough focaccias daily, and roast our coffee beans weekly to ensure a golden crema in every cup.
+        </p>
+      </div>
+      <div>
+        <img src="/static/images/restaurant_interior.png" alt="Interior Ambient Setup" style="border-radius: 8px; box-shadow: 0 10px 30px var(--shadow);">
+      </div>
+    </div>
+  </section>
+
+  <!-- Timeline Section -->
+  <section class="section-padding" style="background-color: var(--bg-secondary); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);">
+    <div class="container">
+      <div class="text-center">
+        <span class="section-subtitle" data-trn="our_timeline">Our Journey</span>
+        <h2 class="section-title" data-trn="timeline_title">Key Milestones</h2>
+        <div class="divider"></div>
+      </div>
+      
+      <div class="timeline">
+        <div class="timeline-item">
+          <div class="timeline-dot"></div>
+          <div class="timeline-content">
+            <div class="timeline-date">1996</div>
+            <h4 style="margin-bottom: 10px;" data-trn="timeline_1_title">The Perugia Bakery</h4>
+            <p style="font-size: 0.85rem; color: var(--text-secondary);" data-trn="timeline_1_desc">Nonno Mario opens a traditional sourdough bakery and espresso bar in Perugia, Italy.</p>
+          </div>
+        </div>
+        
+        <div class="timeline-item">
+          <div class="timeline-dot"></div>
+          <div class="timeline-content">
+            <div class="timeline-date">2008</div>
+            <h4 style="margin-bottom: 10px;" data-trn="timeline_2_title">International Acclaim</h4>
+            <p style="font-size: 0.85rem; color: var(--text-secondary);" data-trn="timeline_2_desc">The bakery expands its menu, gaining a listing in European gourmet guides for authentic thin-crust Neapolitan pizzas.</p>
+          </div>
+        </div>
+        
+        <div class="timeline-item">
+          <div class="timeline-dot"></div>
+          <div class="timeline-content">
+            <div class="timeline-date">2018</div>
+            <h4 style="margin-bottom: 10px;" data-trn="timeline_3_title">The Third Wave Fusion</h4>
+            <p style="font-size: 0.85rem; color: var(--text-secondary);" data-trn="timeline_3_desc">Mario's children incorporate organic single-origin specialty coffee roasters, introducing nitro drafts and pistachio affogatos.</p>
+          </div>
+        </div>
+        
+        <div class="timeline-item">
+          <div class="timeline-dot"></div>
+          <div class="timeline-content">
+            <div class="timeline-date">2026</div>
+            <h4 style="margin-bottom: 10px;" data-trn="timeline_4_title">Gusto Italiano Online</h4>
+            <p style="font-size: 0.85rem; color: var(--text-secondary);" data-trn="timeline_4_desc">Launching our fully automated digital table reservation, customer loyalty rewards, and smart ordering systems.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Meet the Chefs Section -->
+  <section class="section-padding container">
+    <div class="text-center">
+      <span class="section-subtitle" data-trn="masters_title">Master Artisans</span>
+      <h2 class="section-title" data-trn="chefs_title">Meet Our Culinary Leaders</h2>
+      <div class="divider"></div>
+    </div>
+    
+    <div class="chef-grid">
+      <!-- Chef 1 -->
+      <div class="chef-card">
+        <img src="/static/images/restaurant_interior.png" alt="Chef Giovanni Bruno" class="chef-img">
+        <div class="chef-info">
+          <h3 class="chef-name">Giovanni Bruno</h3>
+          <div class="chef-role" data-trn="role_exec_chef">Executive Chef</div>
+          <p class="chef-bio" data-trn="chef_gio_bio">With over 20 years of experience in Michelin-starred establishments in Rome, Chef Giovanni brings an elevated touch to classic Italian favorites.</p>
+        </div>
+      </div>
+      
+      <!-- Chef 2 -->
+      <div class="chef-card">
+        <img src="/static/images/hero_pasta.png" alt="Chef Lucia Bianco" class="chef-img">
+        <div class="chef-info">
+          <h3 class="chef-name">Lucia Bianco</h3>
+          <div class="chef-role" data-trn="role_pastry_chef">Head Pastry Chef</div>
+          <p class="chef-bio" data-trn="chef_lucia_bio">Born in Sicily, Chef Lucia spent years mastering the craft of sweet ricotta cannolis, vanilla bean panna cottas, and light tiramisus.</p>
+        </div>
+      </div>
+      
+      <!-- Chef 3 -->
+      <div class="chef-card">
+        <img src="/static/images/hero_coffee.png" alt="Matteo Verdi" class="chef-img">
+        <div class="chef-info">
+          <h3 class="chef-name">Matteo Verdi</h3>
+          <div class="chef-role" data-trn="role_roaster">Master Coffee Roaster</div>
+          <p class="chef-bio" data-trn="chef_matteo_bio">An expert in third-wave coffee sourcing, Matteo travels to Central America and East Africa annually to handpick organic micro-lots.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+{% endblock %}

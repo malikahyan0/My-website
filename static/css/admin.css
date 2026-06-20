@@ -1,0 +1,282 @@
+/* Gusto Italiano & Cafe - Admin Dashboard Stylesheet */
+
+.admin-body {
+  background-color: var(--bg-secondary);
+}
+
+.admin-wrapper {
+  display: flex;
+  min-height: 100vh;
+  margin-top: var(--header-height);
+}
+
+/* --- Sidebar Navigation --- */
+.admin-sidebar {
+  width: 260px;
+  background-color: var(--bg-primary);
+  border-right: 1px solid var(--border);
+  padding: 30px 0;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+}
+
+.admin-sidebar-menu {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.admin-menu-item {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 14px 25px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  border-left: 3px solid transparent;
+  cursor: pointer;
+  transition: var(--transition-fast);
+}
+.admin-menu-item:hover,
+.admin-menu-item.active {
+  color: var(--accent);
+  background-color: var(--bg-tertiary);
+  border-left-color: var(--accent);
+}
+.admin-menu-item i {
+  font-size: 1.1rem;
+}
+
+/* --- Content Workspace --- */
+.admin-content {
+  flex: 1;
+  padding: 40px;
+  overflow-x: hidden;
+}
+
+.admin-page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 35px;
+}
+.admin-page-header h2 {
+  font-family: var(--font-display);
+  font-size: 2rem;
+  font-weight: 600;
+}
+
+/* --- Stats Grid --- */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 25px;
+  margin-bottom: 40px;
+}
+.stat-card {
+  background-color: var(--bg-primary);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 25px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 4px 15px var(--shadow);
+  transition: var(--transition-smooth);
+}
+.stat-card:hover {
+  transform: translateY(-3px);
+  border-color: var(--accent);
+}
+.stat-info h4 {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 8px;
+}
+.stat-val {
+  font-size: 1.8rem;
+  font-weight: 700;
+  font-family: var(--font-display);
+}
+.stat-icon {
+  width: 50px;
+  height: 50px;
+  border-radius: 8px;
+  background-color: var(--bg-tertiary);
+  color: var(--accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+}
+
+/* --- Admin Panel Views --- */
+.admin-panel {
+  display: none;
+  animation: fadeIn 0.4s ease forwards;
+}
+.admin-panel.active {
+  display: block;
+}
+
+/* --- Data Table Styling --- */
+.table-responsive {
+  width: 100%;
+  overflow-x: auto;
+  background-color: var(--bg-primary);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  box-shadow: 0 4px 15px var(--shadow);
+  margin-bottom: 30px;
+}
+
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.admin-table th, 
+.admin-table td {
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border);
+  font-size: 0.85rem;
+}
+
+.admin-table th {
+  background-color: var(--bg-tertiary);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-secondary);
+}
+
+.admin-table tr:last-child td {
+  border-bottom: none;
+}
+
+/* --- Status Pills --- */
+.status-pill {
+  display: inline-flex;
+  padding: 5px 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  border-radius: 20px;
+  text-transform: uppercase;
+}
+.status-pill.pending { background-color: var(--accent-light); color: var(--accent); }
+.status-pill.preparing { background-color: rgba(194, 149, 71, 0.15); color: var(--warning); }
+.status-pill.on_the_way { background-color: rgba(74, 107, 93, 0.15); color: #88c2b5; }
+.status-pill.delivered { background-color: rgba(74, 107, 93, 0.25); color: var(--success); }
+.status-pill.confirmed { background-color: rgba(74, 107, 93, 0.25); color: var(--success); }
+.status-pill.completed { background-color: var(--bg-tertiary); color: var(--text-secondary); }
+.status-pill.cancelled { background-color: rgba(168, 90, 90, 0.15); color: var(--error); }
+
+/* --- Forms in Dashboard --- */
+.form-card {
+  background-color: var(--bg-primary);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 30px;
+  box-shadow: 0 4px 15px var(--shadow);
+  margin-bottom: 30px;
+}
+.form-card h3 {
+  font-family: var(--font-display);
+  font-size: 1.4rem;
+  margin-bottom: 25px;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+/* --- Chart Simulator Layout --- */
+.chart-container {
+  background-color: var(--bg-primary);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 30px;
+  box-shadow: 0 4px 15px var(--shadow);
+  margin-bottom: 40px;
+}
+.chart-container h3 {
+  font-family: var(--font-display);
+  font-size: 1.4rem;
+  margin-bottom: 25px;
+}
+.mock-chart {
+  width: 100%;
+  height: 250px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  padding: 20px 40px 0 40px;
+  border-left: 2px solid var(--border);
+  border-bottom: 2px solid var(--border);
+  position: relative;
+}
+.chart-bar-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+  gap: 10px;
+}
+.chart-bar {
+  width: 40px;
+  background-color: var(--accent);
+  border-top-left-radius: 4px;
+  border-top-right-radius: 4px;
+  transition: var(--transition-smooth);
+  position: relative;
+}
+.chart-bar:hover {
+  background-color: var(--accent-hover);
+}
+.chart-bar-val {
+  position: absolute;
+  top: -25px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+.chart-label {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+}
+
+@media (max-width: 992px) {
+  .admin-wrapper {
+    flex-direction: column;
+  }
+  .admin-sidebar {
+    width: 100%;
+    flex-direction: row;
+    overflow-x: auto;
+    padding: 10px 0;
+  }
+  .admin-sidebar-menu {
+    flex-direction: row;
+  }
+  .admin-menu-item {
+    padding: 10px 15px;
+    border-left: none;
+    border-bottom: 3px solid transparent;
+  }
+  .admin-menu-item.active {
+    border-left-color: transparent;
+    border-bottom-color: var(--accent);
+  }
+  .form-row {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+}

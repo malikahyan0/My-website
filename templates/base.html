@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gusto Italiano & Cafe | Specialty Coffee & Authentic Italian Cuisine</title>
+  
+  <!-- SEO Metadata -->
+  <meta name="description" content="Experience premium specialty coffee, crispy fast food, and authentic handcrafted Italian dishes in a luxurious dark-ambient setting. Order online or reserve a table today.">
+  <meta name="keywords" content="Specialty Coffee, Italian Food, Neapolitan Pizza, Fresh Pasta, Bistro, Coffeehouse, Table Reservation, Online Food Delivery">
+  <meta name="author" content="Gusto Italiano">
+  
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- Custom Stylesheets -->
+  <link rel="stylesheet" href="/static/css/style.css">
+  <link rel="stylesheet" href="/static/css/components.css">
+  <link rel="stylesheet" href="/static/css/responsive.css">
+  
+  <!-- Block for page-specific styles -->
+  {% block styles %}{% endblock %}
+</head>
+<body class="{% if session.get('theme') == 'dark' %}dark-theme{% endif %}">
+
+  <!-- Toast Container for Notifications -->
+  <div id="toast-container" class="toast-container"></div>
+
+  <!-- Header Section -->
+  <header id="main-header">
+    <div class="container nav-container">
+      <!-- Logo -->
+      <a href="/" class="logo">
+        <i class="fa-solid fa-mug-hot"></i> GUSTO <span>ITALIANO</span>
+      </a>
+      
+      <!-- Nav Links -->
+      <nav>
+        <ul class="nav-links" id="nav-links">
+          <li><a href="/" class="nav-link {% if current_page == 'home' %}active{% endif %}" data-trn="home">Home</a></li>
+          <li><a href="/menu" class="nav-link {% if current_page == 'menu' %}active{% endif %}" data-trn="menu">Menu</a></li>
+          <li><a href="/about" class="nav-link {% if current_page == 'about' %}active{% endif %}" data-trn="about">About</a></li>
+          <li><a href="/gallery" class="nav-link {% if current_page == 'gallery' %}active{% endif %}" data-trn="gallery">Gallery</a></li>
+          <li><a href="/reviews" class="nav-link {% if current_page == 'reviews' %}active{% endif %}" data-trn="reviews">Reviews</a></li>
+          <li><a href="/contact" class="nav-link {% if current_page == 'contact' %}active{% endif %}" data-trn="contact">Contact</a></li>
+          
+          {% if session.get('role') == 'admin' %}
+            <li><a href="/admin/dashboard" class="nav-link" style="color: var(--accent);"><i class="fa-solid fa-user-gear"></i> Admin</a></li>
+          {% endif %}
+        </ul>
+      </nav>
+      
+      <!-- Actions -->
+      <div class="nav-actions">
+        <!-- Language Switcher -->
+        <select id="lang-select" style="background: transparent; border: 1px solid var(--border); color: var(--text-primary); border-radius: 4px; padding: 4px 8px; cursor: pointer; font-size: 0.8rem; font-weight: 600;">
+          <option value="en">EN</option>
+          <option value="it">IT</option>
+        </select>
+        
+        <!-- Theme Toggle -->
+        <button class="nav-action-btn theme-toggle" id="theme-toggle-btn" aria-label="Toggle Theme">
+          <i class="fa-solid fa-moon moon-icon"></i>
+          <i class="fa-solid fa-sun sun-icon"></i>
+        </button>
+        
+        <!-- Shopping Cart -->
+        <button class="nav-action-btn" id="cart-toggle-btn" aria-label="Open Shopping Cart">
+          <i class="fa-solid fa-bag-shopping"></i>
+          <span class="cart-count" id="cart-badge-count">0</span>
+        </button>
+        
+        <!-- User Account (Login Trigger) -->
+        {% if session.get('user_id') %}
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <button class="nav-action-btn" id="profile-toggle-btn" aria-label="View Profile">
+              <i class="fa-solid fa-user"></i>
+            </button>
+            <button class="nav-action-btn" id="logout-btn" title="Logout" aria-label="Logout">
+              <i class="fa-solid fa-right-from-bracket" style="color: var(--error);"></i>
+            </button>
+          </div>
+        {% else %}
+          <button class="nav-action-btn" id="login-modal-trigger" aria-label="Sign In">
+            <i class="fa-solid fa-user"></i>
+          </button>
+        {% endif %}
+        
+        <!-- Mobile Toggle -->
+        <div class="mobile-nav-toggle" id="mobile-nav-toggle">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content Space -->
+  <main style="min-height: calc(100vh - 400px);">
+    {% block content %}{% endblock %}
+  </main>
+
+  <!-- Footer Section -->
+  <footer>
+    <div class="container footer-grid">
+      <div class="footer-col footer-about">
+        <a href="/" class="logo" style="margin-bottom: 20px;">
+          <i class="fa-solid fa-mug-hot"></i> GUSTO <span>ITALIANO</span>
+        </a>
+        <p data-trn="footer_about">Gusto Italiano blends the rich traditions of Italian culinary heritage with third-wave specialty espresso roasting. We source organic, certified ingredients directly from local farms in Umbria and roast our beans weekly.</p>
+        <div class="social-links">
+          <a href="#" class="social-icon" aria-label="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
+          <a href="#" class="social-icon" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+          <a href="#" class="social-icon" aria-label="TripAdvisor"><i class="fa-brands fa-tripadvisor"></i></a>
+          <a href="https://wa.me/123456789" class="social-icon" aria-label="WhatsApp" target="_blank"><i class="fa-brands fa-whatsapp"></i></a>
+        </div>
+      </div>
+      
+      <div class="footer-col footer-links">
+        <h3 data-trn="explore">Explore</h3>
+        <ul>
+          <li><a href="/menu" data-trn="our_menu">Our Menu</a></li>
+          <li><a href="/#reserve-section" data-trn="book_table">Book Table</a></li>
+          <li><a href="/about" data-trn="our_story">Our Story</a></li>
+          <li><a href="/gallery" data-trn="photo_gallery">Photo Gallery</a></li>
+          <li><a href="/reviews" data-trn="testimonials">Testimonials</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col footer-links">
+        <h3 data-trn="business_hours">Business Hours</h3>
+        <p style="font-size: 0.9rem; line-height: 1.8; margin-bottom: 10px;">
+          <strong data-trn="weekdays">Monday - Friday:</strong><br>
+          07:30 AM - 10:00 PM
+        </p>
+        <p style="font-size: 0.9rem; line-height: 1.8;">
+          <strong data-trn="weekends">Saturday - Sunday:</strong><br>
+          08:30 AM - 11:30 PM
+        </p>
+      </div>
+
+      <div class="footer-col footer-newsletter">
+        <h3 data-trn="newsletter">Newsletter</h3>
+        <p style="font-size: 0.9rem; margin-bottom: 20px;" data-trn="newsletter_desc">Subscribe for culinary news, coffee masterclasses, and priority reservation invites.</p>
+        <form class="newsletter-form" id="newsletter-form-action">
+          <input type="email" placeholder="Your Email Address" required id="newsletter-email-val">
+          <button type="submit" class="btn btn-primary"><i class="fa-regular fa-paper-plane"></i></button>
+        </form>
+      </div>
+    </div>
+    
+    <div class="container footer-bottom">
+      <p>&copy; 2026 Gusto Italiano & Cafe. All rights reserved. <span data-trn="crafted">Crafted with passion in Italy.</span></p>
+      <div class="footer-bottom-links">
+        <a href="#" data-trn="privacy_policy">Privacy Policy</a>
+        <a href="#" data-trn="terms_conditions">Terms of Conditions</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Shopping Cart Side Drawer -->
+  <div class="cart-drawer-overlay" id="cart-drawer-overlay"></div>
+  <div class="cart-drawer" id="cart-drawer">
+    <div class="cart-header">
+      <h2><i class="fa-solid fa-cart-shopping" style="color: var(--accent);"></i> <span data-trn="your_cart">Your Cart</span></h2>
+      <button class="close-cart-btn" id="close-cart-btn" aria-label="Close Cart"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="cart-items-container" id="cart-items-list">
+      <!-- Injected dynamically via JS -->
+      <div class="cart-empty-state">
+        <i class="fa-solid fa-basket-shopping"></i>
+        <p data-trn="cart_empty">Your cart is empty. Let's add some delicious dishes!</p>
+        <a href="/menu" class="btn btn-primary" data-trn="view_menu">View Menu</a>
+      </div>
+    </div>
+    <div class="cart-footer" id="cart-summary-footer" style="display: none;">
+      <div class="cart-total-row">
+        <span data-trn="subtotal">Subtotal:</span>
+        <span id="cart-subtotal-val">$0.00</span>
+      </div>
+      <a href="/checkout" class="btn btn-primary" data-trn="checkout_btn">Proceed to Checkout</a>
+    </div>
+  </div>
+
+  <!-- Authentication Modal (Login / Registration) -->
+  <div class="modal-overlay" id="auth-modal-overlay">
+    <div class="modal-content" id="auth-modal-content">
+      <button class="close-modal-btn" id="close-modal-btn" aria-label="Close Authentication Screen"><i class="fa-solid fa-xmark"></i></button>
+      
+      <!-- Login View -->
+      <div id="login-view">
+        <h3 data-trn="sign_in">Sign In</h3>
+        <form id="login-form-element">
+          <div class="form-group">
+            <label for="login-email" data-trn="email_label">Email Address</label>
+            <input type="email" id="login-email" required placeholder="name@domain.com">
+          </div>
+          <div class="form-group">
+            <label for="login-password" data-trn="password_label">Password</label>
+            <input type="password" id="login-password" required placeholder="••••••••">
+          </div>
+          <button type="submit" class="btn btn-primary" style="width: 100%;" data-trn="sign_in">Sign In</button>
+        </form>
+        <p class="modal-footer-text">
+          <span data-trn="dont_have_account">Don't have an account?</span> 
+          <a href="#" id="switch-to-register" data-trn="register_now">Register Now</a>
+        </p>
+      </div>
+      
+      <!-- Register View -->
+      <div id="register-view" style="display: none;">
+        <h3 data-trn="create_account">Create Account</h3>
+        <form id="register-form-element">
+          <div class="form-group">
+            <label for="reg-name" data-trn="full_name_label">Full Name</label>
+            <input type="text" id="reg-name" required placeholder="Mario Rossi">
+          </div>
+          <div class="form-group">
+            <label for="reg-email" data-trn="email_label">Email Address</label>
+            <input type="email" id="reg-email" required placeholder="mario@rossi.com">
+          </div>
+          <div class="form-group">
+            <label for="reg-phone" data-trn="phone_label">Phone Number</label>
+            <input type="tel" id="reg-phone" required placeholder="+39 333 1234567">
+          </div>
+          <div class="form-group">
+            <label for="reg-password" data-trn="password_label">Password</label>
+            <input type="password" id="reg-password" required placeholder="Min 6 characters">
+          </div>
+          <button type="submit" class="btn btn-primary" style="width: 100%;" data-trn="register_btn">Register</button>
+        </form>
+        <p class="modal-footer-text">
+          <span data-trn="already_have_account">Already have an account?</span> 
+          <a href="#" id="switch-to-login" data-trn="sign_in">Sign In</a>
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Profile Modal -->
+  <div class="modal-overlay" id="profile-modal-overlay">
+    <div class="modal-content">
+      <button class="close-modal-btn" id="close-profile-btn" aria-label="Close Profile"><i class="fa-solid fa-xmark"></i></button>
+      <h3 data-trn="customer_profile">Customer Profile</h3>
+      <div id="profile-details-area">
+        <p style="margin-bottom: 12px;"><strong>Name:</strong> <span id="prof-name">-</span></p>
+        <p style="margin-bottom: 12px;"><strong>Email:</strong> <span id="prof-email">-</span></p>
+        <p style="margin-bottom: 12px;"><strong>Phone:</strong> <span id="prof-phone">-</span></p>
+        <p style="margin-bottom: 20px; border-top: 1px solid var(--border); padding-top: 15px;">
+          <strong data-trn="loyalty_points_label">Loyalty Points:</strong> 
+          <span id="prof-points" style="font-weight: 700; color: var(--accent); font-size: 1.2rem;">0</span>
+        </p>
+      </div>
+      <a href="/admin/dashboard" id="profile-go-admin" class="btn btn-accent-outline" style="width: 100%; display: none; margin-bottom: 10px;"><i class="fa-solid fa-user-gear"></i> Admin Dashboard</a>
+    </div>
+  </div>
+
+  <!-- Live Chat Widget -->
+  <div class="chat-widget-container" id="chat-widget-container">
+    <button class="chat-btn" id="chat-toggle-btn-bubble" aria-label="Open Live Chat Support">
+      <i class="fa-regular fa-comment-dots"></i>
+    </button>
+    <div class="chat-window" id="chat-window-box">
+      <div class="chat-header">
+        <div class="chat-agent-info">
+          <div class="chat-agent-avatar">G</div>
+          <div>
+            <div class="chat-agent-name">Gusto Assistant</div>
+            <div class="chat-agent-status" data-trn="online">Online</div>
+          </div>
+        </div>
+        <button id="close-chat-btn-icon" style="background: transparent; color: var(--text-primary); font-size: 1.2rem; cursor: pointer;"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="chat-messages" id="chat-messages-scroll">
+        <div class="chat-msg bot" data-trn="chat_welcome">
+          Ciao! I am your Gusto Assistant. How can I help you today?
+        </div>
+      </div>
+      <div class="chat-quick-replies">
+        <button class="quick-reply-btn" data-msg="Reserve a table" data-trn="book_table">Book Table</button>
+        <button class="quick-reply-btn" data-msg="Track my order" data-trn="track_order">Track Order</button>
+        <button class="quick-reply-btn" data-msg="What is recommended?" data-trn="ai_recs">AI Recommendations</button>
+        <button class="quick-reply-btn" data-msg="Store hours" data-trn="opening_hours">Opening Hours</button>
+      </div>
+      <div class="chat-input-container">
+        <input type="text" id="chat-input-text" placeholder="Type a message...">
+        <button class="chat-send-btn" id="chat-send-btn-action" aria-label="Send Message"><i class="fa-solid fa-paper-plane"></i></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Common Scripts -->
+  <script src="/static/js/main.js"></script>
+  <script src="/static/js/cart.js"></script>
+  
+  <!-- Block for page-specific scripts -->
+  {% block scripts %}{% endblock %}
+</body>
+</html>
